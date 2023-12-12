@@ -1,4 +1,4 @@
-package main
+package trebuchet
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"unicode"
 )
 
-func main() {
+func Part1() {
 	if len(os.Args) <= 1 {
 		fmt.Printf("Invalid number of arguments: %d\n", len(os.Args))
 		os.Exit(1)
