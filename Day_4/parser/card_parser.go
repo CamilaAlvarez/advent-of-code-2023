@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,11 +23,10 @@ type Card struct {
 
 func fillNumbersList(numbers string) []int {
 	var winningNumbers []int
-	// Use regex when spliting
+	re := regexp.MustCompile(" +")
 	numbers = strings.Trim(numbers, numbersSeparator)
-	for _, v := range strings.Split(numbers, numbersSeparator) {
+	for _, v := range re.Split(numbers, -1) {
 		v = strings.Trim(v, numbersSeparator)
-		fmt.Println(numbers)
 		number, err := strconv.Atoi(v)
 		if err != nil {
 			log.Fatal("Invalid card number: ", v)
