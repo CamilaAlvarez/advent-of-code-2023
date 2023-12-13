@@ -16,10 +16,13 @@ func main() {
 	if err != nil {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
-	var sumPoints int
 	cards := parser.ParseCards(file)
-	for _, v := range cards {
-		var i, j, points int
+	cardAmounts := make([]int, len(cards))
+	for k := range cards {
+		cardAmounts[k] = 1
+	}
+	for k, v := range cards {
+		var i, j, winningCount int
 		winningNumbers := v.SortedWinningNumbers
 		numbersYouHave := v.SortedNumbersYouHave
 		for i < len(winningNumbers) && j < len(numbersYouHave) {
@@ -29,18 +32,20 @@ func main() {
 			} else if winningNumbers[i] < numbersYouHave[j] {
 				i++
 			} else {
-				if points == 0 {
-					points = 1
-				} else {
-					points *= 2
-				}
+				winningCount++
 				i++
 				j++
 			}
 		}
-		fmt.Println("Point for card ", v.Id, ": ", points)
-		sumPoints += points
+		for i := 0; i < winningCount; i++ {
+			cardAmounts[k+i+1] = cardAmounts[k+i+1] + cardAmounts[k]
+		}
+		fmt.Println("Total amount of ", v.Id, " cards: ", cardAmounts[k])
 	}
-	fmt.Println("Total points: ", sumPoints)
+	var sumCards int
+	for _, v := range cardAmounts {
+		sumCards += v
+	}
+	fmt.Println("Number of scratchcards: ", sumCards)
 
 }
