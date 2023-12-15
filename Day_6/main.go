@@ -34,18 +34,15 @@ func main() {
 	if err != nil {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
-	races := parser.Parse(file)
-	fmt.Println(races)
+	race := parser.Parse(file)
+	fmt.Println(race)
 	fmt.Println()
 	fmt.Println()
 
-	mulOptions := 1
-	for _, v := range races {
-		x1, x2 := computeRaceFunctionRoots(v)
-		options := int(math.Ceil(x1-1)) - int(math.Floor(x2+1)) + 1
-		fmt.Println("Race with time", v.Time, "and distance", v.Distance, ":", options, "ways to win")
-		mulOptions *= options
-	}
+	x1, x2 := computeRaceFunctionRoots(race)
+	options := int(math.Ceil(x1-1)) - int(math.Floor(x2+1)) + 1
+	fmt.Println("Race with time", race.Time, "and distance", race.Distance, ":", options, "ways to win")
+
 	fmt.Println()
-	fmt.Println("Multiplication of ways to win: ", mulOptions)
+	fmt.Println("Multiplication of ways to win: ", options)
 }

@@ -18,34 +18,27 @@ type Race struct {
 }
 
 // we're assumming the file follows the requried structure
-func Parse(file io.Reader) []Race {
+func Parse(file io.Reader) Race {
 	re := regexp.MustCompile(" +")
 	scanner := bufio.NewScanner(file)
-	var races []Race
-	times := getList(scanner, re, time)
-	distances := getList(scanner, re, distance)
-	if len(times) != len(distances) {
-		log.Fatal("Number of times and distances don't match: ", len(times), " vs. ", len(distances))
-	}
-	for k, v := range times {
-		races = append(races, Race{v, distances[k]})
-	}
-	return races
+	time := getNumberFromLine(scanner, re, time)
+	distance := getNumberFromLine(scanner, re, distance)
+
+	return Race{time, distance}
 }
 
-func getList(scanner *bufio.Scanner, re *regexp.Regexp, remove string) []int {
-	var list []int
+func getNumberFromLine(scanner *bufio.Scanner, re *regexp.Regexp, remove string) int {
+	var number int
 	if scanner.Scan() {
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, remove, "")
 		line = strings.Trim(line, " ")
-		for _, v := range re.Split(line, -1) {
-			value, err := strconv.Atoi(v)
-			if err != nil {
-				log.Fatal("Invalid number: ", v)
-			}
-			list = append(list, value)
+		line = re.ReplaceAllString(line, "")
+		value, err := strconv.Atoi(line)
+		if err != nil {
+			log.Fatal("Invalid number: ", line)
 		}
+		number = value
 	}
-	return list
+	return number
 }
