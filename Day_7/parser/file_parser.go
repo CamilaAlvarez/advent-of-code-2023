@@ -12,6 +12,7 @@ type Card int
 type Strength int
 
 const numberCards int = 13
+const HandSize int = 5
 const (
 	Two Card = iota
 	Three
@@ -39,7 +40,7 @@ const (
 )
 
 type Hand struct {
-	Cards    [5]Card
+	Cards    [HandSize]Card
 	Bid      int
 	Strength Strength
 }

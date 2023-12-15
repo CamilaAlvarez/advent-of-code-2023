@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/CamilaAlvarez/advent-of-code-2023/Day_7/parser"
+	"github.com/CamilaAlvarez/advent-of-code-2023/Day_7/sort"
 )
 
 func main() {
@@ -18,4 +19,12 @@ func main() {
 	}
 	hands := parser.ParseHands(file)
 	fmt.Println(hands)
+	fmt.Println()
+	sort.SortHands(hands)
+	var totalWinnings int
+	for k, v := range hands {
+		rank := k + 1
+		totalWinnings += (rank * v.Bid)
+	}
+	fmt.Println("Total winnings:", totalWinnings)
 }
