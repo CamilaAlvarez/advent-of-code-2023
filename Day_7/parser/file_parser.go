@@ -14,7 +14,8 @@ type Strength int
 const numberCards int = 13
 const HandSize int = 5
 const (
-	Two Card = iota
+	J Card = iota
+	Two
 	Three
 	Four
 	Five
@@ -23,7 +24,6 @@ const (
 	Eight
 	Nine
 	T
-	J
 	Q
 	K
 	A
@@ -113,37 +113,44 @@ func ParseHands(file io.Reader) []Hand {
 			}
 		}
 		var counter, sum, highestNumberCards int
-		for _, v := range cardCounter {
-			sum += v
-			if v != 0 {
-				counter++
-			}
-			if highestNumberCards < v {
-				highestNumberCards = v
-			}
-			if sum == 5 {
-				switch counter {
-				case 1:
-					hand.Strength = FiveOfAKind
-				case 2:
-					if highestNumberCards == 4 {
-						hand.Strength = FourOfAKind
-					} else {
-						hand.Strength = FullHouse
+		// We're using J in the way that gives the most advantage
+		if cardCounter[0] == 5 {
+			// We just need to check this individual case
+			hand.Strength = FiveOfAKind
+		} else {
+			for _, v := range cardCounter[1:] {
+				sum += v
+				if v != 0 {
+					counter++
+				}
+				if highestNumberCards < v {
+					highestNumberCards = v
+				}
+				if sum > 0 && sum == 5-cardCounter[0] {
+					switch counter {
+					case 1:
+						hand.Strength = FiveOfAKind
+					case 2:
+						if highestNumberCards == (4 - cardCounter[0]) {
+							hand.Strength = FourOfAKind
+						} else {
+							hand.Strength = FullHouse
+						}
+					case 3:
+						if highestNumberCards == (3 - cardCounter[0]) {
+							hand.Strength = ThreeOfAKind
+						} else {
+							hand.Strength = TwoPair
+						}
+					case 4:
+						hand.Strength = OnePair
+					case 5:
+						hand.Strength = HighCard
 					}
-				case 3:
-					if highestNumberCards == 3 {
-						hand.Strength = ThreeOfAKind
-					} else {
-						hand.Strength = TwoPair
-					}
-				case 4:
-					hand.Strength = OnePair
-				case 5:
-					hand.Strength = HighCard
 				}
 			}
 		}
+
 		hands = append(hands, hand)
 	}
 	return hands
