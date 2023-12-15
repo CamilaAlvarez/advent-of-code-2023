@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"regexp"
 	"sort"
 	"strconv"
@@ -24,9 +25,13 @@ type ElementMapRow struct {
 	SourceStart      int
 	RangeLength      int
 }
+type SeedRange struct {
+	SeedStart       int
+	SeedRangeLength int
+}
 
 type Almanac struct {
-	Seeds                  []int
+	Seeds                  []SeedRange
 	SeedToSoilMap          []ElementMapRow
 	SoilToFertilizerMap    []ElementMapRow
 	FertilizerToWaterMap   []ElementMapRow
@@ -48,7 +53,14 @@ func ParseInputToAlmanac(file io.Reader) Almanac {
 		if strings.Index(line, seeds) == 0 {
 			line = strings.Replace(line, seeds, "", 1)
 			seeds := createNumberListFromString(re, line)
-			almanac.Seeds = seeds
+			if len(seeds)%2 != 0 {
+				log.Fatal("Invalid number of seeds (should always be even)")
+			}
+			var seedRanges []SeedRange
+			for i := 0; i < len(seeds)/2; i++ {
+				seedRanges = append(seedRanges, SeedRange{seeds[i*2], seeds[i*2+1]})
+			}
+			almanac.Seeds = seedRanges
 		} else {
 			switch line {
 			case seedToSoil:
