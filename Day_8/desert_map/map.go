@@ -2,7 +2,9 @@ package desertmap
 
 import (
 	"log"
-	"math"
+	"strings"
+
+	mymath "github.com/CamilaAlvarez/advent-of-code-2023/Day_8/math"
 )
 
 type Direction rune
@@ -34,31 +36,51 @@ func (ip *InstructionPattern) GetNext() Direction {
 	return nextDirection
 }
 
-func (m MapFile) NumberOfSteps(from Node, to Node) int {
-	var count int
-	if from == to {
-		return count
-	}
-	currentNode := from
+// Paths reach a Z ending path in a periodic manner. Finding the minimum number of steps it takes
+// each path, and finding the LCM gives us the total number of steps
+func (m MapFile) NumberOfSteps(from []Node) int {
+	var count, completed int
+	var zSuffix string = "Z"
+	currentNodes := from
+	stepsForNode := make([]int, len(from))
 	for m.Pattern.HasNext() {
 		p := m.Pattern.GetNext()
-		v, ok := m.Map[currentNode]
-		if !ok {
-			log.Fatal("Invalid node: ", currentNode)
-		}
 		count++
-		switch p {
-		case L:
-			currentNode = v.L
-		case R:
-			currentNode = v.R
-		default:
-			log.Fatal("Invalid pattern symbol:", p)
+		for i, n := range currentNodes {
+			v, ok := m.Map[n]
+			if !ok {
+				log.Fatal("Invalid node: ", n)
+			}
+			switch p {
+			case L:
+				currentNodes[i] = v.L
+			case R:
+				currentNodes[i] = v.R
+			default:
+				log.Fatal("Invalid pattern symbol:", p)
+			}
+			if strings.HasSuffix(string(currentNodes[i]), zSuffix) && stepsForNode[i] == 0 {
+				stepsForNode[i] = count
+				completed++
+			}
 		}
-		if currentNode == to {
-			return count
+		if completed == len(currentNodes) {
+			break
 		}
 	}
-	log.Fatal("No path between", from, "and to", to, "was found")
-	return math.MaxInt
+	lcm := (stepsForNode[0] * stepsForNode[1]) / mymath.GCD(stepsForNode[0], stepsForNode[1])
+	for i := 2; i < len(stepsForNode); i++ {
+		lcm = (lcm * stepsForNode[i]) / mymath.GCD(lcm, stepsForNode[i])
+	}
+	return lcm
+}
+func (m MapFile) StartingPoints() []Node {
+	aSuffix := "A"
+	var startingPoints []Node
+	for k := range m.Map {
+		if strings.HasSuffix(string(k), aSuffix) {
+			startingPoints = append(startingPoints, k)
+		}
+	}
+	return startingPoints
 }
