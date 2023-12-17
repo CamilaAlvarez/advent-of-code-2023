@@ -17,5 +17,11 @@ func main() {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
 	report := parser.ParseReport(file)
-	fmt.Println(report)
+	predictions := report.ComputePredictions()
+	var sum int
+	for _, p := range predictions {
+		sum += p
+	}
+	fmt.Println("Prediction sum:", sum)
+
 }
