@@ -31,12 +31,12 @@ func computePrediction(r PredictionRecords, values []int) int {
 			allZeros = false
 		}
 	}
-	lastValue := values[len(values)-1]
+	firstValue := values[0]
 	var prediction int
 	if allZeros {
-		prediction = lastValue
+		prediction = firstValue
 	} else {
-		prediction = values[len(values)-1] + computePrediction(r, nextValues)
+		prediction = firstValue - computePrediction(r, nextValues)
 	}
 	r[hHash] = prediction
 	return prediction
