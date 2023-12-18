@@ -17,5 +17,5 @@ func main() {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
 	pipes := parser.ParseMap(file)
-	fmt.Println(pipes)
+	fmt.Println("Max distance: ", pipes.FindMaxDistance())
 }

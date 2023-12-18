@@ -22,8 +22,7 @@ func ParseMap(file io.Reader) pipemap.PipeMap {
 				continue
 			case 'S':
 				row = append(row, pipemap.S)
-				pipes.StartLocationRow = rowNumberStart
-				pipes.StartLocationCol = colNumberStart
+				pipes.StartLocation = pipemap.Location{I: rowNumberStart, J: colNumberStart}
 			case '|':
 				row = append(row, pipemap.I)
 			case '-':
