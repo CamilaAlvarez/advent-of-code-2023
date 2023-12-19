@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 
 	"github.com/CamilaAlvarez/advent-of-code-2023/Day_11/parser"
@@ -17,7 +18,16 @@ func main() {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
 	galaxies := parser.ParseToGalaxies(file)
-	for _, v := range galaxies {
+	for _, v := range galaxies.Map {
 		fmt.Println(v)
 	}
+	var sumDistances int
+	for i := 0; i < len(galaxies.GalaxyLocation)-1; i++ {
+		for j := i + 1; j < len(galaxies.GalaxyLocation); j++ {
+			distI := int(math.Abs(float64(galaxies.GalaxyLocation[j].I - galaxies.GalaxyLocation[i].I)))
+			distJ := int(math.Abs(float64(galaxies.GalaxyLocation[j].J - galaxies.GalaxyLocation[i].J)))
+			sumDistances += (distI + distJ)
+		}
+	}
+	fmt.Println("Sum distances: ", sumDistances)
 }

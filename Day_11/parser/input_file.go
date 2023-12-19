@@ -9,7 +9,7 @@ import (
 	"github.com/CamilaAlvarez/advent-of-code-2023/Day_11/galaxy"
 )
 
-func ParseToGalaxies(file io.Reader) galaxy.GalaxyMap {
+func ParseToGalaxies(file io.Reader) galaxy.Galaxy {
 	var galaxiesTmp, galaxies galaxy.GalaxyMap
 	var emptyRowsIndex, emptyColsIndex []int
 	scanner := bufio.NewScanner(file)
@@ -41,7 +41,7 @@ func ParseToGalaxies(file io.Reader) galaxy.GalaxyMap {
 			emptyColsIndex = append(emptyColsIndex, j)
 		}
 	}
-
+	var locations []galaxy.Point
 	for i, v := range galaxiesTmp {
 		if slices.Contains(emptyRowsIndex, i) {
 			newRow := make([]string, len(v)+len(emptyColsIndex))
@@ -58,8 +58,14 @@ func ParseToGalaxies(file io.Reader) galaxy.GalaxyMap {
 				addToIndex++
 			}
 			newRow[j+addToIndex] = v[j]
+			if newRow[j+addToIndex] == "#" {
+				locations = append(locations, galaxy.Point{I: len(galaxies), J: j + addToIndex})
+			}
 		}
 		galaxies = append(galaxies, newRow)
 	}
-	return galaxies
+	return galaxy.Galaxy{
+		Map:            galaxies,
+		GalaxyLocation: locations,
+	}
 }
