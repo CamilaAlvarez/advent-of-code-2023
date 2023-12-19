@@ -6,6 +6,5 @@ type Point struct {
 	J int
 }
 type Galaxy struct {
-	Map            GalaxyMap
 	GalaxyLocation []Point
 }

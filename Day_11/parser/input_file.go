@@ -9,8 +9,10 @@ import (
 	"github.com/CamilaAlvarez/advent-of-code-2023/Day_11/galaxy"
 )
 
+const emptyItemsToAdd int = 1000000 - 1
+
 func ParseToGalaxies(file io.Reader) galaxy.Galaxy {
-	var galaxiesTmp, galaxies galaxy.GalaxyMap
+	var galaxiesTmp galaxy.GalaxyMap
 	var emptyRowsIndex, emptyColsIndex []int
 	scanner := bufio.NewScanner(file)
 	var i int
@@ -42,30 +44,22 @@ func ParseToGalaxies(file io.Reader) galaxy.Galaxy {
 		}
 	}
 	var locations []galaxy.Point
+	var addToRowIndex int
 	for i, v := range galaxiesTmp {
 		if slices.Contains(emptyRowsIndex, i) {
-			newRow := make([]string, len(v)+len(emptyColsIndex))
-			for j := 0; j < len(v)+len(emptyColsIndex); j++ {
-				newRow[j] = "."
-			}
-			galaxies = append(galaxies, newRow)
+			addToRowIndex += emptyItemsToAdd
 		}
-		newRow := make([]string, len(v)+len(emptyColsIndex))
 		var addToIndex int
 		for j := 0; j < len(v); j++ {
 			if slices.Contains(emptyColsIndex, j) {
-				newRow[j+addToIndex] = "."
-				addToIndex++
+				addToIndex += emptyItemsToAdd
 			}
-			newRow[j+addToIndex] = v[j]
-			if newRow[j+addToIndex] == "#" {
-				locations = append(locations, galaxy.Point{I: len(galaxies), J: j + addToIndex})
+			if v[j] == "#" {
+				locations = append(locations, galaxy.Point{I: i + addToRowIndex, J: j + addToIndex})
 			}
 		}
-		galaxies = append(galaxies, newRow)
 	}
 	return galaxy.Galaxy{
-		Map:            galaxies,
 		GalaxyLocation: locations,
 	}
 }

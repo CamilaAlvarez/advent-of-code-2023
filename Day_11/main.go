@@ -18,9 +18,6 @@ func main() {
 		log.Fatal("Could not open input file: ", os.Args[1])
 	}
 	galaxies := parser.ParseToGalaxies(file)
-	for _, v := range galaxies.Map {
-		fmt.Println(v)
-	}
 	var sumDistances int
 	for i := 0; i < len(galaxies.GalaxyLocation)-1; i++ {
 		for j := i + 1; j < len(galaxies.GalaxyLocation); j++ {
