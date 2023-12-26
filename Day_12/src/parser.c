@@ -19,12 +19,12 @@ Record *parse_records(const char *filename, size_t *number_records)
     char *line = NULL;
     size_t n = 0;
     size_t read;
-    *number_records = 0;
     while ((read = getline(&line, &n, input)) != -1)
     {
         records[record_index].number_groups = 0;
         records[record_index].record_length = 0;
         bool reading_groups = false;
+        int current_number = 0;
         for (int i = 0; i < read; i++)
         {
             char read_char = line[i];
@@ -38,12 +38,14 @@ Record *parse_records(const char *filename, size_t *number_records)
             }
             else if (read_char == ',')
             {
-                continue;
+                records[record_index]
+                    .continuous_damaged_items[records[record_index].number_groups] = current_number;
+                records[record_index].number_groups++;
+                current_number = 0;
             }
             else if (reading_groups)
             {
-                records[record_index].continuous_damaged_items[records[record_index].number_groups] = read_char - '0';
-                records[record_index].number_groups++;
+                current_number = current_number * 10 + (int)(read_char - '0');
             }
             else
             {
@@ -65,6 +67,12 @@ Record *parse_records(const char *filename, size_t *number_records)
                 }
                 records[record_index].record_length++;
             }
+        }
+        if (current_number > 0)
+        {
+            records[record_index]
+                .continuous_damaged_items[records[record_index].number_groups] = current_number;
+            records[record_index].number_groups++;
         }
         record_index++;
     }

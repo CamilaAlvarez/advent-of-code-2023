@@ -13,6 +13,11 @@ int main(int argc, char const *argv[])
     size_t number_records;
     int valid_arrangements = 0;
     Record *records = parse_records(argv[1], &number_records);
+    for (int i = 0; i < records->number_groups; i++)
+    {
+        printf("Group: %d\n", records->continuous_damaged_items[i]);
+    }
+
     printf("Number records: %zu\n", number_records);
     for (int i = 0; i < number_records; i++)
     {
