@@ -33,39 +33,45 @@ int main(int argc, char const *argv[])
         exit(1);
     }
     size_t number_records;
-    int valid_arrangements = 0;
+    unsigned long valid_arrangements = 0;
     Record *records = parse_records(argv[1], &number_records);
     printf("Number records: %zu\n", number_records);
     for (int i = 0; i < number_records; i++)
     {
         int record_length = records[i].record_length;
-        records[i].record_length++;
+        int number_groups = records[i].number_groups;
+        print_record(&records[i]);
         // We try two different options:
-        // Add a ? at the end:
-        records[i]
-            .condition_record[record_length] = UNKNOWN;
-        int un_at_the_end = number_different_arrangements(&records[i]);
-        printf("Arrangements with ? at the end: %d\n", un_at_the_end);
-        // Add a ? at the start:
-        for (int j = record_length - 1; j >= 0; j--)
+        // Normal input:
+        int initial_arrangements = number_different_arrangements(&records[i]);
+        printf("Arrangements initial input: %d\n", initial_arrangements);
+        // Two instances of the initial input:
+        records[i].record_length = 2 * records[i].record_length + 1;
+        records[i].condition_record[record_length] = UNKNOWN;
+        for (int j = 0; j < record_length; j++)
         {
-            records[i].condition_record[j + 1] = records[i].condition_record[j];
+            records[i].condition_record[record_length + 1 + j] = records[i].condition_record[j];
         }
-        records[i].condition_record[0] = UNKNOWN;
-        int un_at_the_start = number_different_arrangements(&records[i]);
-        printf("Arrangements with ? at the start: %d\n", un_at_the_start);
-        int arrangements;
-        if (un_at_the_end > un_at_the_start)
+        records[i].number_groups = 2 * records[i].number_groups;
+        for (int j = 0; j < number_groups; j++)
         {
-            arrangements = un_at_the_end * un_at_the_end * un_at_the_end * un_at_the_end * un_at_the_start;
+            records[i].continuous_damaged_items[number_groups + j] = records[i].continuous_damaged_items[j];
         }
-        else
+        print_record(&records[i]);
+        for (int j = 0; j < records[i].number_groups; j++)
         {
-            arrangements = un_at_the_start * un_at_the_start * un_at_the_start * un_at_the_start * un_at_the_end;
+            printf("%d\n", records[i].continuous_damaged_items[j]);
         }
-        printf("Valid arrangements: %d\n", arrangements);
+        int double_input_arrangements = number_different_arrangements(&records[i]);
+        printf("Arrangements with double input: %d\n", double_input_arrangements);
+        // we divide the results to find the pattern (p = r2/r1)
+        // then we do: r1 * p * p * p * p
+        unsigned long increase_ratio = (unsigned long)double_input_arrangements / initial_arrangements;
+        printf("ratio: %lu\n", increase_ratio);
+        unsigned long arrangements = initial_arrangements * increase_ratio * increase_ratio * increase_ratio * increase_ratio;
+        printf("Valid arrangements: %lu\n", arrangements);
         valid_arrangements += arrangements;
     }
-    printf("Sum of valid arrangements: %d\n", valid_arrangements);
+    printf("Sum of valid arrangements: %lu\n", valid_arrangements);
     return 0;
 }

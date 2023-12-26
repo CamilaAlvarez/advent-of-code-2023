@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MAX_INVALID_SEQUENCE 4096
+#define MAX_INVALID_SEQUENCE 25000
 #define SEQ_LEN 256
 
 static bool is_valid(char *sequence, int sequence_length, Record *record, char invalid_sequences[MAX_INVALID_SEQUENCE][SEQ_LEN], int number_invalid)
@@ -105,7 +105,7 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
                 record.condition_record[i] = OPERATIONAL;
                 recurse_number_different_arrangements(record, invalid_sequences, invalid_index, valid_arrangements);
             }
-            else
+            else if (*invalid_index < MAX_INVALID_SEQUENCE)
             {
                 strcpy(invalid_sequences[*invalid_index], ptemp_sequence);
                 (*invalid_index)++;
@@ -118,7 +118,7 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
                 record.condition_record[i] = DAMAGED;
                 recurse_number_different_arrangements(record, invalid_sequences, invalid_index, valid_arrangements);
             }
-            else
+            else if (*invalid_index < MAX_INVALID_SEQUENCE)
             {
                 strcpy(invalid_sequences[*invalid_index], ptemp_sequence);
                 (*invalid_index)++;
@@ -134,7 +134,7 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
     {
         (*valid_arrangements)++;
     }
-    else if (!is_valid(pcurrent_sequence, record_length, &record, invalid_sequences, *invalid_index))
+    else if (!is_valid(pcurrent_sequence, record_length, &record, invalid_sequences, *invalid_index) && *invalid_index < MAX_INVALID_SEQUENCE)
     {
         strcpy(invalid_sequences[*invalid_index], pcurrent_sequence);
         (*invalid_index)++;
