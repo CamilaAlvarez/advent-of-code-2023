@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MAX_INVALID_SEQUENCE 512
+#define MAX_INVALID_SEQUENCE 4096
 #define SEQ_LEN 256
 
 static bool is_valid(char *sequence, int sequence_length, Record *record, char invalid_sequences[MAX_INVALID_SEQUENCE][SEQ_LEN], int number_invalid)
@@ -61,10 +61,12 @@ static bool is_valid(char *sequence, int sequence_length, Record *record, char i
         {
             return false;
         }
+        damaged_group_index++;
     }
-    if (sequence_length == record->record_length && damaged_group_index < record->number_groups - 1)
+    if (sequence_length == record->record_length && damaged_group_index < record->number_groups)
     {
         // We didn't see all groups even though we look over the whole string
+        // If we had seen all groups our indexed would have reached the number of groups
         return false;
     }
     return true;
@@ -87,6 +89,8 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
             strcat(pcurrent_sequence, "#");
             break;
         case UNKNOWN:
+            // When we find a ? we try to options, but stop the iteration.
+            // The inner calls to the function will check the innermost ? symbols
             if (!is_valid(pcurrent_sequence, i, &record, invalid_sequences, *invalid_index))
             {
                 return;
@@ -119,7 +123,8 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
                 strcpy(invalid_sequences[*invalid_index], ptemp_sequence);
                 (*invalid_index)++;
             }
-            break;
+            // We take a look at every ? one by one
+            return;
         default:
             printf("Invalid symbol\n");
             exit(3);
@@ -130,7 +135,7 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
         (*valid_arrangements)++;
         printf("Valid arrangement: %s\n", pcurrent_sequence);
     }
-    else
+    else if (!is_valid(pcurrent_sequence, record_length, &record, invalid_sequences, *invalid_index))
     {
         strcpy(invalid_sequences[*invalid_index], pcurrent_sequence);
         (*invalid_index)++;

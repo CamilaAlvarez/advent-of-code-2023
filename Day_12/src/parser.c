@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-static int MAX_RECORDS = 1000;
+static int MAX_RECORDS = 1001;
 
 Record *parse_records(const char *filename, size_t *number_records)
 {
