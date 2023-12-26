@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define REPEAT 5
 static int MAX_RECORDS = 1001;
 
 Record *parse_records(const char *filename, size_t *number_records)
@@ -74,6 +75,20 @@ Record *parse_records(const char *filename, size_t *number_records)
                 .continuous_damaged_items[records[record_index].number_groups] = current_number;
             records[record_index].number_groups++;
         }
+        /*for (int i = 1; i < REPEAT; i++)
+        {
+            records[record_index].condition_record[i * records[record_index].record_length + i - 1] = UNKNOWN;
+            for (int j = 0; j < records[record_index].record_length; j++)
+            {
+                records[record_index].condition_record[i * records[record_index].record_length + j + i] = records[record_index].condition_record[j];
+            }
+            for (int j = 0; j < records[record_index].number_groups; j++)
+            {
+                records[record_index].continuous_damaged_items[i * records[record_index].number_groups + j] = records[record_index].continuous_damaged_items[j];
+            }
+        }
+        records[record_index].record_length = 5 * records[record_index].record_length + 5;
+        records[record_index].number_groups = 5 * records[record_index].number_groups;*/
         record_index++;
     }
     *number_records = record_index;

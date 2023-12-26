@@ -133,7 +133,6 @@ static void recurse_number_different_arrangements(Record record, char invalid_se
     if (strlen(pcurrent_sequence) == record_length && is_valid(pcurrent_sequence, record_length, &record, invalid_sequences, *invalid_index))
     {
         (*valid_arrangements)++;
-        printf("Valid arrangement: %s\n", pcurrent_sequence);
     }
     else if (!is_valid(pcurrent_sequence, record_length, &record, invalid_sequences, *invalid_index))
     {
