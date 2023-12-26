@@ -1,3 +1,5 @@
+#ifndef RECORDS_H
+#define RECORDS_H
 typedef enum RecordType
 {
     OPERATIONAL,
@@ -11,3 +13,5 @@ typedef struct Record
     RecordType condition_record[256];
     int continuous_damaged_items[256];
 } Record;
+int number_different_arrangements(Record *record);
+#endif
